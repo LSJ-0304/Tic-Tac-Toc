@@ -14,6 +14,8 @@ int main(void){
 	
 	connect(sk, (struct sockaddr*)&addr, sizeof(addr));
 	
+	printf("홀짝 중 하나를 선택하시오.\n홀은 'o' 짝은 'e'를 쓰시오.");
+	
 	char lang[256];
 	while(1){
 		scanf("%s",lang);

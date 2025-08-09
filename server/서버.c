@@ -41,18 +41,18 @@ int main(void){
 	
 	srand(time(NULL));
 	
-	rand();
-	
-	int rnd = rand%6+1;
+	int rnd = rand()%6+1;
 	
 	printf("%d",rnd);
 	
 	char rndresult[256] = {0,};
 	
 	if(rnd == 1 || rnd == 3 || rnd == 5){
-		rndresult[0] = 'o'; //È¦¼ö 
+		rndresult[0] = 'o'; //È¦¼ö
+		printf("È¦");
 	}else{
-		rndresult[0] = 'e'; //Â¦¼ö 
+		rndresult[0] = 'e'; //Â¦¼ö
+		printf("Â¦");
 	}
 	
 	char buffer1[256];

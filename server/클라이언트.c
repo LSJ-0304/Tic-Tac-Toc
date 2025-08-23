@@ -1,4 +1,5 @@
 #include<winsock2.h>
+#include<stdlib.h>
 
 int main(void){
 	WSADATA wsa;
@@ -14,14 +15,36 @@ int main(void){
 	
 	connect(sk, (struct sockaddr*)&addr, sizeof(addr));
 	
-	printf("홀짝 중 하나를 선택하시오.\n홀은 'o' 짝은 'e'를 쓰시오.");
+	char UrTurn[3];
+	
+	printf("홀짝 중 하나를 선택하시오.\n홀은 'o' 짝은 'e'를 쓰시오.\n");
 	
 	char lang[256];
+	
+	scanf("%s",lang);
+	send(sk, lang, 6 , 0);
+	
+	if(lang == "surrender"){
+		send(sk, lang, strlen(lang) , 0);
+		printf("You Lose");
+		return 0;
+	}
+	
+	for(int i=0;i<strlen(lang);i++){
+		lang[i] =  0;
+	}
+	
 	while(1){
+		recv(sk, UrTurn, sizeof(UrTurn), 0);
+				
+		if(strcmp(UrTurn,"YT")==0)
+			printf("Your Turn\n");
+		
 		scanf("%s",lang);
 	
 		if(lang == "surrender"){
 			send(sk, lang, strlen(lang) , 0);
+			printf("You Lose");
 			return 0;
 		}
 		

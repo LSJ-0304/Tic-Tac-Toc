@@ -58,26 +58,59 @@ int main(void){
 	char buffer1[256];
 	char buffer2[256];
 	
-	while(1){
-		recv(client_sk, buffer1, sizeof(buffer1), 0);
-		printf("%s\n",buffer1);
-		recv(client_sk2, buffer2, sizeof(buffer2), 0);
-		printf("%s\n",buffer2);
-		
-		if(buffer1 == "surrender" || buffer2 == "surrender"){
-			return 0;
+	char UrTurn[3] = "YT";
+	
+	//클라1 이 맞았을 때  
+	if(*sniffling1 == *rndresult){
+		while(1){
+			send(client_sk, UrTurn, strlen(UrTurn) , 0);
+			
+			recv(client_sk, buffer1, sizeof(buffer1), 0);
+				printf("%s\n",buffer1);
+			recv(client_sk2, buffer2, sizeof(buffer2), 0);
+				printf("%s\n",buffer2);
+			
+			if(buffer1 == "surrender" || buffer2 == "surrender"){
+				return 0;
+			}
+			
+			//buffer1 비우기 
+			for(int i=0;i<strlen(buffer1);i++){
+				buffer1[i] =  0;
+			}
+			
+			//buffer2 비우기 
+			for(int i=0;i<strlen(buffer2);i++){
+				buffer2[i] =  0;
+			}
 		}
 		
-		//buffer1 비우기 
-		for(int i=0;i<strlen(buffer1);i++){
-			buffer1[i] =  0;
-		}
-		
-		//buffer2 비우기 
-		for(int i=0;i<strlen(buffer2);i++){
-			buffer2[i] =  0;
+	//클라2 이 맞았을 때  
+	}else if(*sniffling2 == *rndresult){
+		while(1){
+			send(client_sk2, UrTurn, strlen(UrTurn) , 0);
+			
+			recv(client_sk2, buffer2, sizeof(buffer2), 0);
+				printf("%s\n",buffer1);
+			recv(client_sk, buffer1, sizeof(buffer1), 0);
+				printf("%s\n",buffer2);
+			
+			if(buffer1 == "surrender1" || buffer2 == "surrender2"){
+				return 0;
+			}
+			
+			//buffer2 비우기 
+			for(int i=0;i<strlen(buffer2);i++){
+				buffer2[i] =  0;
+			}
+			
+			//buffer1 비우기 
+			for(int i=0;i<strlen(buffer1);i++){
+				buffer1[i] =  0;
+			}
 		}
 	}
+	
 	
 	
 	scanf("%s", buffer1);

@@ -1,5 +1,6 @@
 #include<winsock2.h>
 #include<stdlib.h>
+#include<stdio.h>
 
 int main(void){
 	WSADATA wsa;
@@ -17,7 +18,7 @@ int main(void){
 	
 	char UrTurn[3];
 	
-	printf("È¦Â¦ Áß ÇÏ³ª¸¦ ¼±ÅÃÇÏ½Ã¿À.\nÈ¦Àº 'o' Â¦Àº 'e'¸¦ ¾²½Ã¿À.\n");
+	printf("í™€ì§ ì¤‘ í•˜ë‚˜ë¥¼ ì„ íƒí•˜ì‹œì˜¤.\ní™€ì€ 'o' ì§ì€ 'e'ë¥¼ ì“°ì‹œì˜¤.\n");
 	
 	char lang[256];
 	

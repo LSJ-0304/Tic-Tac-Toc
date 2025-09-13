@@ -1,5 +1,6 @@
 #include<winsock2.h>
 #include<time.h>
+#include<stdio.h>
 
 int main(void){
 	WSADATA wsa;
@@ -30,7 +31,7 @@ int main(void){
 	int client_sk2;
 	client_sk2 = accept(sk, (struct sockaddr*)&client_addr, &client_len2);
 	
-	//È¦Â¦ ÁÖ»çÀ§ ÄÚµå
+	//í™€ì§ ì£¼ì‚¬ìœ„ ì½”ë“œ
 	char sniffling1[256];
 	char sniffling2[256];
 	
@@ -48,11 +49,11 @@ int main(void){
 	char rndresult[256] = {0,};
 	
 	if(rnd == 1 || rnd == 3 || rnd == 5){
-		rndresult[0] = 'o'; //È¦¼ö
-		printf("È¦");
+		rndresult[0] = 'o'; //í™€ìˆ˜
+		printf("í™€");
 	}else{
-		rndresult[0] = 'e'; //Â¦¼ö
-		printf("Â¦");
+		rndresult[0] = 'e'; //ì§ìˆ˜
+		printf("ì§");
 	}
 	
 	char buffer1[256];
@@ -60,13 +61,16 @@ int main(void){
 	
 	char UrTurn[3] = "YT";
 	
-	//Å¬¶ó1 ÀÌ ¸Â¾ÒÀ» ¶§  
+	//í´ë¼1 ì´ ë§ì•˜ì„ ë•Œ  
 	if(*sniffling1 == *rndresult){
 		while(1){
 			send(client_sk, UrTurn, strlen(UrTurn) , 0);
 			
 			recv(client_sk, buffer1, sizeof(buffer1), 0);
 				printf("%s\n",buffer1);
+				
+			send(client_sk2, UrTurn, strlen(UrTurn) , 0);
+			
 			recv(client_sk2, buffer2, sizeof(buffer2), 0);
 				printf("%s\n",buffer2);
 			
@@ -74,24 +78,27 @@ int main(void){
 				return 0;
 			}
 			
-			//buffer1 ºñ¿ì±â 
+			//buffer1 ë¹„ìš°ê¸° 
 			for(int i=0;i<strlen(buffer1);i++){
 				buffer1[i] =  0;
 			}
 			
-			//buffer2 ºñ¿ì±â 
+			//buffer2 ë¹„ìš°ê¸° 
 			for(int i=0;i<strlen(buffer2);i++){
 				buffer2[i] =  0;
 			}
 		}
 		
-	//Å¬¶ó2 ÀÌ ¸Â¾ÒÀ» ¶§  
+	//í´ë¼2 ì´ ë§ì•˜ì„ ë•Œ  
 	}else if(*sniffling2 == *rndresult){
 		while(1){
 			send(client_sk2, UrTurn, strlen(UrTurn) , 0);
 			
 			recv(client_sk2, buffer2, sizeof(buffer2), 0);
 				printf("%s\n",buffer1);
+				
+			send(client_sk, UrTurn, strlen(UrTurn) , 0);
+			
 			recv(client_sk, buffer1, sizeof(buffer1), 0);
 				printf("%s\n",buffer2);
 			
@@ -99,12 +106,12 @@ int main(void){
 				return 0;
 			}
 			
-			//buffer2 ºñ¿ì±â 
+			//buffer2 ë¹„ìš°ê¸° 
 			for(int i=0;i<strlen(buffer2);i++){
 				buffer2[i] =  0;
 			}
 			
-			//buffer1 ºñ¿ì±â 
+			//buffer1 ë¹„ìš°ê¸° 
 			for(int i=0;i<strlen(buffer1);i++){
 				buffer1[i] =  0;
 			}

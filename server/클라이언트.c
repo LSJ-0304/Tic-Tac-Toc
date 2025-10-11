@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<conio.h>
-#include <windows.h>
+#include<windows.h>
 
 void clearScreen() {
     printf("\033[2J");
@@ -56,15 +56,16 @@ int main(void){
 	    {'1','2','3'}
 	};
 	
+	char onedemdisplay[10] = {0,};
+	int imsi = 0;
 	
-	char Tnumber;
-	char check;
+	
+	char Tnumber[2];
+	char check[2];
 	char wrongnumber = 0;
 	int PreviousN[3][3] = {0,};
 	int valid = 0;
-	char winner;
-	
-	int RECV;
+	char winner[2];
 	
 	for(int i=0;i<strlen(lang);i++){
 		lang[i] =  0;
@@ -72,7 +73,7 @@ int main(void){
 	
 	clearScreen();
 	
-	recv(sk, &check, sizeof(check) , 0);
+	recv(sk, check, sizeof(check) , 0);
 	
 	char myMark;
 	if(check == 'o') myMark = 'o';
@@ -94,19 +95,19 @@ int main(void){
 	printf("------------------------\n");
 
 	while(1){
-		RECV = recv(sk, UrTurn, 3, 0);
+		recv(sk, UrTurn, 3, 0);
 				
-		if(RECV >  0){
+		if(UrTurn[0] == 'Y'){
 			printf("%s\n",UrTurn);
 		
 			do{
 				valid = 0;
-				Tnumber = _getch();
-				if(check == 'o'){
+				Tnumber[0] = _getch();
+				if(check[0] == 'o'){
 					for(int c=0;c<3;c++){
 						for(int v=0;v<3;v++){
 							
-							if(Tnumber == display[c][v]){
+							if(Tnumber[0] == display[c][v]){
 								PreviousN[c][v] = 1;
 								valid = 1;
 							}
@@ -116,55 +117,69 @@ int main(void){
 					for(int c=0;c<3;c++){
 						for(int v=0;v<3;v++){
 							
-							if(Tnumber == display[c][v]){
+							if(Tnumber[0] == display[c][v]){
 								PreviousN[c][v] = 1;
 								valid = 1;
 							}
 						}
 					}
 				}
+				
+				printf("Tnumber[0] : %c",Tnumber[0]);
 					
 				if(!valid) printf("Wrong Number\n");
 			}while(!valid);
 			
-			send(sk, &Tnumber, 1 , 0);
+			send(sk, Tnumber, sizeof(Tnumber) , 0);
 			
-			int recv_len = recv(sk, display, sizeof(display), 0);
+		}
 			
-			clearScreen();
-			
-			if(recv_len > 0){
-				for(int i=0;i<3;i++){
-					
-					for(int j=0;j<3;j++){
-						printf("  \033[33m%c\033[0m",display[i][j]);
-					
-						if((j+1) % 3 == 0){
-							printf("\n");
-						}else{
-							printf("  |");
-						}
+		int recv_len = recv(sk, onedemdisplay, sizeof(onedemdisplay), 0);
+		
+		printf("onedem : %s\n",onedemdisplay);
+		
+		for(int i=0;i<3;i++){
+			for(int j=0;j<3;j++){
+				display[i][j] = onedemdisplay[imsi];
+				imsi++;
+			}
+		}
+		
+		imsi = 0;
+		
+		clearScreen();
+		
+		if(recv_len > 0){
+			for(int i=0;i<3;i++){
+				
+				for(int j=0;j<3;j++){
+					printf("  \033[33m%c\033[0m",display[i][j]);
+				
+					if((j+1) % 3 == 0){
+						printf("\n");
+					}else{
+						printf("  |");
 					}
-					if(i != 2)
-						printf("-----------------\n");
 				}
+				if(i != 2)
+					printf("-----------------\n");
 			}
-			printf("------------------------\n");
-			
-			recv(sk, &winner, sizeof(winner), 0);
-			
-			printf("winner의 값 : %c\n",winner);
-			
-			if(winner == myMark){
-			    printf("\033[32m%c 승리!\033[0m", myMark);
-			    break;
-			}else if(winner == 'o' || winner == 'x'){
-			    printf("\033[31m%c 패배!\033[0m", myMark);
-			    break;
-			}else if(isDraw(number)){
-			    printf("\033[35m무승부!\033[0m");
-			    break;
-			}
+		}
+		printf("------------------------\n");
+		
+		recv(sk, winner, sizeof(winner), 0);
+		
+		printf("winner의 값 : %c\n",winner[0]);
+		
+		if(winner[0] == myMark){
+		    printf("\033[32m%c 승리!\033[0m", myMark);
+		    break;
+		}else if(winner[0] == 'o' || winner[0] == 'x'){
+		    printf("\033[31m%c 패배!\033[0m", myMark);
+		    break;
+		}else if(isDraw(number)){
+		    printf("\033[35m무승부!\033[0m");
+		    break;
 		}
 	}
 	

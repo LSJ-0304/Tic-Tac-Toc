@@ -69,11 +69,15 @@ int main(void){
 	int client_sk;
 	client_sk = accept(sk, (struct sockaddr*)&client_addr, &client_len);
 	
+	printf("1");
+	
 	//client2
 	struct sockaddr_in client_addr2;
 	int client_len2 = sizeof(client_addr);
 	int client_sk2;
 	client_sk2 = accept(sk, (struct sockaddr*)&client_addr2, &client_len2);
+	
+	printf("2");
 	
 	//홀짝 주사위 코드
 	char sniffling1[256];
@@ -100,12 +104,12 @@ int main(void){
 		printf("짝\n");
 	}
 	
-	char Tnumber1;
-	char Tnumber2;
+	char Tnumber1[2]={0,};
+	char Tnumber2[2]={0,};
 	
-	char check = 'o';
+	char check[2] = "o";
 	
-	char winner = '0';
+	char winner[2] = "0";
 	
 	char number[3][3] = {
 	    {' ',' ',' '},
@@ -119,40 +123,39 @@ int main(void){
 	    {'1','2','3'}
 	};
 	
+	char onedemdisplay[10] = {0,};
+	int imsi=0;
+	
 	char UrTurn[3] = {'Y','T'};
+	char NotUrTurn[3] = {'N','Y'};
 	int SEND;
 	int SEND2;
 	
 	//클라1 이 맞았을 때  
-	if(*sniffling1 == *rndresult){
-		if(check == 'o'){
-			send(client_sk, &check, sizeof(check) , 0);
-			check = 'x';
-			send(client_sk2, &check, sizeof(check) , 0);
+	if(*sniffling2 == *rndresult){
+		if(check[0] == 'o'){
+			send(client_sk, check, sizeof(check) , 0);
+			check[0] = 'x';
+			send(client_sk2, check, sizeof(check) , 0);
 		}else{
-			send(client_sk2, &check, sizeof(check) , 0);
-			check = 'o';
-			send(client_sk, &check, sizeof(check) , 0);
+			send(client_sk2, check, sizeof(check) , 0);
+			check[0] = 'o';
+			send(client_sk, check, sizeof(check) , 0);
 		}
 		while(1){
-			if(check == 'o'){
+			if(check[0] == 'o'){
 				
 				SEND = send(client_sk, UrTurn, sizeof(UrTurn) , 0);
+				SEND2 = send(client_sk2, NotUrTurn, sizeof(NotUrTurn) , 0);
 				
-				if(SEND > 0){
-					printf("UrTurn 보냄 : %s\n",UrTurn);
-				}
-				
-				printf("SEND : %d\n",SEND);
-				
-				recv(client_sk, &Tnumber1, sizeof(Tnumber1), 0);
-				printf("Tnumber1 : %c\n",Tnumber1);
+				recv(client_sk, Tnumber1, sizeof(Tnumber1), 0);
+				printf("Tnumber1 : %c\n",Tnumber1[0]);
 				
 				for(int c=0;c<3;c++){
 					for(int v=0;v<3;v++){
 						
-						if(Tnumber1 == display[c][v]){
-							if(check == 'o'){
+						if(Tnumber1[0] == display[c][v]){
+							if(check[0] == 'o'){
 								number[c][v] = 'o';
 								display[c][v] = 'o';
 							}
@@ -160,24 +163,19 @@ int main(void){
 					}
 				}
 				
-				winner = checkwinner(number);
-	    		if(winner != '0' || isDraw(number)) break;
+				winner[0] = checkwinner(number);
+	    		if(winner[0] != '0' || isDraw(number)) break;
 	    	}else{
 				SEND2 = send(client_sk2, UrTurn, sizeof(UrTurn) , 0);
+				SEND = send(client_sk, NotUrTurn, sizeof(NotUrTurn) , 0);
 				
-				if(SEND2 > 0){
-					printf("UrTurn2 보냄 : %s\n",UrTurn);
-				}
-				
-				printf("SEND2 : %d\n",SEND2);
-				
-				recv(client_sk2, &Tnumber2, sizeof(Tnumber2), 0);
-				printf("Tnumber2 : %c\n",Tnumber2);
+				recv(client_sk2, Tnumber2, sizeof(Tnumber2), 0);
+				printf("Tnumber2 : %c\n",Tnumber2[0]);
 					
 				for(int c=0;c<3;c++){
 					for(int v=0;v<3;v++){
 						
-						if(Tnumber2 == display[c][v]){
+						if(Tnumber2[0] == display[c][v]){
 							if(check == 'x'){
 								number[c][v] = 'x';
 								display[c][v] = 'x';
@@ -186,8 +184,8 @@ int main(void){
 					}
 				}
 				
-				winner = checkwinner(number);
-	    		if(winner != '0' || isDraw(number)) break;
+				winner[0] = checkwinner(number);
+	    		if(winner[0] != '0' || isDraw(number)) break;
 	    	}
 			
 			for(int i=0;i<3;i++){
@@ -206,54 +204,60 @@ int main(void){
 	
 			printf("------------------------\n");
 			
-			send(client_sk, display, sizeof(display), 0);
-			send(client_sk2, display, sizeof(display), 0);
+			for(int i=0;i<3;i++){
+				for(int j=0;j<3;j++){
+					onedemdisplay[imsi] = display[i][j];
+					imsi++;
+				}
+			}
+			
+			imsi = 0;
+			
+			send(client_sk, onedemdisplay, sizeof(onedemdisplay), 0);
+			send(client_sk2, onedemdisplay, sizeof(onedemdisplay), 0);
 			
 			//Tnumber1 비우기 
-			Tnumber1 =  0;
+			Tnumber1[0] = 0;
 			
 			//Tnumber2 비우기 
-			Tnumber2 =  0;
-			
-			winner = checkwinner(number);
-    		if(winner != '-1' || isDraw(number)) break;
+			Tnumber2[0] = 0;
     		
     		SEND = 0;
     		SEND2 = 0;
     		
-    		check = (check == 'o') ? 'x' : 'o';
+    		winner[0] = checkwinner(number);
+	   		if(winner[0] != '0' || isDraw(number)) break;
+	   		send(client_sk, winner, sizeof(winner) , 0);
+	   		send(client_sk2, winner, sizeof(winner) , 0);
+    		
+    		check[0] = (check[0] == 'o') ? 'x' : 'o';
 		}
 		
 	//클라2 이 맞았을 때  
-	}else if(*sniffling2 == *rndresult){
-		if(check == 'o'){
-			send(client_sk2, &check, sizeof(check) , 0);
-			check = 'x';
-			send(client_sk, &check, sizeof(check) , 0);
+	}else if(*sniffling1 == *rndresult){
+		if(check[0] == 'o'){
+			send(client_sk2, check, sizeof(check) , 0);
+			check[0] = 'x';
+			send(client_sk, check, sizeof(check) , 0);
 		}else{
-			send(client_sk, &check, sizeof(check) , 0);
-			check = 'o';
-			send(client_sk2, &check, sizeof(check) , 0);
+			send(client_sk, check, sizeof(check) , 0);
+			check[0] = 'o';
+			send(client_sk2, check, sizeof(check) , 0);
 		}
 		while(1){
-			if(check == 'o'){
+			if(check[0] == 'o'){
 				
 				SEND2 = send(client_sk2, UrTurn, sizeof(UrTurn) , 0);
+				SEND = send(client_sk, NotUrTurn, sizeof(NotUrTurn) , 0);
 				
-				if(SEND2 > 0){
-					printf("UrTurn2 보냄 : %s\n",UrTurn);
-				}
-				
-				printf("SEND2 : %d\n",SEND2);
-				
-				recv(client_sk2, &Tnumber2, sizeof(Tnumber2), 0);
-				printf("Tnumber2 : %c\n",Tnumber2);
+				recv(client_sk2, Tnumber2, sizeof(Tnumber2), 0);
+				printf("Tnumber2 : %c\n",Tnumber2[0]);
 				
 				for(int c=0;c<3;c++){
 					for(int v=0;v<3;v++){
 						
-						if(Tnumber2 == display[c][v]){
-							if(check == 'o'){
+						if(Tnumber2[0] == display[c][v]){
+							if(check[0] == 'o'){
 								number[c][v] = 'o';
 								display[c][v] = 'o';
 							}
@@ -261,25 +265,20 @@ int main(void){
 					}
 				}
 				
-				winner = checkwinner(number);
-	    		if(winner != '0' || isDraw(number)) break;
+				winner[0] = checkwinner(number);
+	    		if(winner[0] != '0' || isDraw(number)) break;
 	    	}else{
 				SEND = send(client_sk, UrTurn, sizeof(UrTurn) , 0);
+				SEND2 = send(client_sk2, NotUrTurn, sizeof(NotUrTurn) , 0);
 				
-				if(SEND > 0){
-					printf("UrTurn 보냄 : %s\n",UrTurn);
-				}
-				
-				printf("SEND : %d\n",SEND);
-				
-				recv(client_sk, &Tnumber1, sizeof(Tnumber1), 0);
-				printf("Tnumber1 : %c\n",Tnumber1);
+				recv(client_sk, Tnumber1, sizeof(Tnumber1), 0);
+				printf("Tnumber1 : %c\n",Tnumber1[0]);
 				
 				for(int c=0;c<3;c++){
 					for(int v=0;v<3;v++){
 						
-						if(Tnumber1 == display[c][v]){
-							if(check == 'x'){
+						if(Tnumber1[0] == display[c][v]){
+							if(check[0] == 'x'){
 								number[c][v] = 'x';
 								display[c][v] = 'x';
 							}
@@ -287,8 +286,8 @@ int main(void){
 					}
 				}
 				
-				winner = checkwinner(number);
-	    		if(winner != '0' || isDraw(number)) break;
+				winner[0] = checkwinner(number);
+	    		if(winner[0] != '0' || isDraw(number)) break;
 	    	}
 			
 			for(int i=0;i<3;i++){
@@ -307,30 +306,51 @@ int main(void){
 	
 			printf("------------------------\n");
 			
-			send(client_sk2, display, sizeof(display), 0);
-			send(client_sk, display, sizeof(display), 0);
+			for(int i=0;i<3;i++){
+				for(int j=0;j<3;j++){
+					onedemdisplay[imsi] = display[i][j];
+					imsi++;
+				}
+			}
+			
+			imsi = 0;
+			
+			send(client_sk2, onedemdisplay, sizeof(onedemdisplay), 0);
+			send(client_sk, onedemdisplay, sizeof(onedemdisplay), 0);
 			
 			//Tnumber2 비우기 
-			Tnumber2 =  0;
+			Tnumber2[0] =  0;
 
 			
 			//Tnumber1 비우기 
-			Tnumber1 =  0;
-			
-			winner = checkwinner(number);
-    		if(winner != '-1' || isDraw(number)) break;
+			Tnumber1[0] =  0;
     		
     		SEND = 0;
     		SEND2 = 0;
     		
-    		check = (check == 'o') ? 'x' : 'o';
+    		winner[0] = checkwinner(number);
+	   		if(winner[0] != '0' || isDraw(number)) break;
+	   		send(client_sk, winner, sizeof(winner) , 0);
+	   		send(client_sk2, winner, sizeof(winner) , 0);
+    		
+    		check[0] = (check[0] == 'o') ? 'x' : 'o';
 		}
-	}	
-	send(client_sk, display, sizeof(display), 0);
-	send(client_sk2, display, sizeof(display), 0);
+	}
 	
-	send(client_sk, &winner, sizeof(winner) , 0);
-	send(client_sk2, &winner, sizeof(winner) , 0);
+	for(int i=0;i<3;i++){
+		for(int j=0;j<3;j++){
+			onedemdisplay[imsi] = display[i][j];
+			imsi++;
+		}
+	}
+	
+	imsi = 0;
+	
+	send(client_sk, onedemdisplay, sizeof(onedemdisplay), 0);
+	send(client_sk2, onedemdisplay, sizeof(onedemdisplay), 0);
+	
+	send(client_sk, winner, sizeof(winner) , 0);
+	send(client_sk2, winner, sizeof(winner) , 0);
 	
 	for(int i=0;i<3;i++){
 		for(int j=0;j<3;j++){
@@ -348,15 +368,15 @@ int main(void){
 	
 	printf("------------------------\n");
 	
-	if(winner == 'o'){
+	if(winner[0] == 'o'){
 	    printf("\033[32mo 승리!\033[0m\n");
-	}else if(winner == 'x'){
+	}else if(winner[0] == 'x'){
 	    printf("\033[32mx 승리!\033[0m\n");
 	}else{
 	    printf("\033[31m무승부!\033[0m\n");
 	}
 	
-	scanf("%c", Tnumber1);
+	Sleep(5000);
 	
 	return 0;
 }

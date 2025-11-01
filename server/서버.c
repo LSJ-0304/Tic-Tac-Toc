@@ -69,7 +69,7 @@ int main(void){
 	int client_sk;
 	client_sk = accept(sk, (struct sockaddr*)&client_addr, &client_len);
 	
-	printf("1");
+	printf("1\n");
 	
 	//client2
 	struct sockaddr_in client_addr2;
@@ -77,16 +77,16 @@ int main(void){
 	int client_sk2;
 	client_sk2 = accept(sk, (struct sockaddr*)&client_addr2, &client_len2);
 	
-	printf("2");
+	printf("2\n");
 	
 	//홀짝 주사위 코드
 	char sniffling1[256];
 	char sniffling2[256];
 	
 	recv(client_sk, sniffling1, sizeof(sniffling1), 0);
-	printf("%s\n",sniffling1);
+	printf("%c\n",sniffling1[0]);
 	recv(client_sk2, sniffling2, sizeof(sniffling2), 0);
-	printf("%s\n",sniffling2);
+	printf("%c\n",sniffling2[0]);
 	
 	srand(time(NULL));
 	
@@ -134,15 +134,14 @@ int main(void){
 	int SEND2;
 	
 	//클라1 이 맞았을 때  
-	if(*sniffling2 == *rndresult){
+	if(sniffling1[0] == rndresult[0]){
 		if(check[0] == 'o'){
-			send(client_sk2, check, sizeof(check) , 0);
+			send(client_sk, check, sizeof(check) , 0);
+			printf("1check1 : %c\n",check[0]);
 			check[0] = 'x';
-			send(client_sk, check, sizeof(check) , 0);
-		}else{
-			send(client_sk, check, sizeof(check) , 0);
-			check[0] = 'o';
 			send(client_sk2, check, sizeof(check) , 0);
+			printf("1check2 : %c\n",check[0]);
+			check[0] = 'o';
 		}
 		while(1){
 			if(check[0] == 'o'){
@@ -157,10 +156,8 @@ int main(void){
 					for(int v=0;v<3;v++){
 						
 						if(Tnumber1[0] == display[c][v]){
-							if(check[0] == 'o'){
-								number[c][v] = 'o';
-								display[c][v] = 'o';
-							}
+							number[c][v] = 'o';
+							display[c][v] = 'o';
 						}
 					}
 				}
@@ -178,10 +175,8 @@ int main(void){
 					for(int v=0;v<3;v++){
 						
 						if(Tnumber2[0] == display[c][v]){
-							if(check == 'x'){
-								number[c][v] = 'x';
-								display[c][v] = 'x';
-							}
+							number[c][v] = 'x';
+							display[c][v] = 'x';
 						}
 					}
 				}
@@ -239,15 +234,14 @@ int main(void){
 		}
 		
 	//클라2 이 맞았을 때  
-	}else if(*sniffling1 == *rndresult){
+	}else if(sniffling2[0] == rndresult[0]){
 		if(check[0] == 'o'){
-			send(client_sk, check, sizeof(check) , 0);
+			send(client_sk2, check, sizeof(check) , 0);
+			printf("2check2 : %c\n",check[0]);
 			check[0] = 'x';
-			send(client_sk2, check, sizeof(check) , 0);
-		}else{
-			send(client_sk2, check, sizeof(check) , 0);
-			check[0] = 'o';
 			send(client_sk, check, sizeof(check) , 0);
+			printf("2check1 : %c\n",check[0]);
+			check[0] = 'o';
 		}
 		while(1){
 			if(check[0] == 'o'){
@@ -262,10 +256,8 @@ int main(void){
 					for(int v=0;v<3;v++){
 						
 						if(Tnumber2[0] == display[c][v]){
-							if(check[0] == 'o'){
-								number[c][v] = 'o';
-								display[c][v] = 'o';
-							}
+							number[c][v] = 'o';
+							display[c][v] = 'o';
 						}
 					}
 				}
@@ -283,10 +275,8 @@ int main(void){
 					for(int v=0;v<3;v++){
 						
 						if(Tnumber1[0] == display[c][v]){
-							if(check[0] == 'x'){
-								number[c][v] = 'x';
-								display[c][v] = 'x';
-							}
+							number[c][v] = 'x';
+							display[c][v] = 'x';
 						}
 					}
 				}

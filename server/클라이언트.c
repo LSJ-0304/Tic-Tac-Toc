@@ -41,7 +41,7 @@ int main(void){
 	
 	char lang[256];
 	
-	scanf("%s",lang);
+	scanf("%c",&lang[0]);
 	send(sk, lang, 6 , 0);
 	
 	char number[3][3] = {
@@ -67,17 +67,14 @@ int main(void){
 	int valid = 0;
 	char winner[2];
 	
-	for(int i=0;i<strlen(lang);i++){
-		lang[i] =  0;
-	}
-	
 	clearScreen();
 	
 	recv(sk, check, sizeof(check) , 0);
 	
-	char myMark;
-	if(check == 'o') myMark = 'o';
-	else myMark = 'x';
+	char myMark[2];
+	if(check[0] == 'o') myMark[0] = 'o';
+	else myMark[0] = 'x';
+	printf("MyMark : %c MyChoice : %c\n",myMark[0],lang[0]);
 	
 	for(int i=0;i<3;i++){
 		for(int j=0;j<3;j++){
@@ -132,11 +129,13 @@ int main(void){
 			
 			send(sk, Tnumber, sizeof(Tnumber) , 0);
 			
+			for(int i=0;i<2;i++){
+				Tnumber[i] = 0;
+			}
+			
 		}
 			
 		int recv_len = recv(sk, onedemdisplay, sizeof(onedemdisplay), 0);
-		
-		printf("onedem : %s\n",onedemdisplay);
 		
 		for(int i=0;i<3;i++){
 			for(int j=0;j<3;j++){
@@ -150,6 +149,8 @@ int main(void){
 		char Draw[2] = {0,};
 		
 		clearScreen();
+		
+		printf("MyMark : %c MyChoice : %c\n",myMark[0],lang[0]);
 		
 		if(recv_len > 0){
 			for(int i=0;i<3;i++){
@@ -173,18 +174,16 @@ int main(void){
 		
 		recv(sk, Draw, sizeof(Draw), 0);
 		
-		printf("winner의 값 : %c\n",winner[0]);
-		
 		
 		if(Draw[0] == 'd'){
 			printf("\033[35m무승부!\033[0m");
 		    break;
 		}else{
-			if(winner[0] == myMark){
-			    printf("\033[32m%c 승리!\033[0m", myMark);
+			if(winner[0] == myMark[0]){
+			    printf("\033[32m%c 승리!\033[0m", myMark[0]);
 			    break;
 			}else if(winner[0] == 'o' || winner[0] == 'x'){
-			    printf("\033[31m%c 패배!\033[0m", myMark);
+			    printf("\033[31m%c 패배!\033[0m", myMark[0]);
 			    break;
 			}
 		}

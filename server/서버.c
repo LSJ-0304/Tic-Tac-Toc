@@ -111,6 +111,8 @@ int main(void){
 	
 	char winner[2] = "0";
 	
+	char Draw[2] = "0";
+	
 	char number[3][3] = {
 	    {' ',' ',' '},
 	    {' ',' ',' '},
@@ -134,13 +136,13 @@ int main(void){
 	//클라1 이 맞았을 때  
 	if(*sniffling2 == *rndresult){
 		if(check[0] == 'o'){
-			send(client_sk, check, sizeof(check) , 0);
+			send(client_sk2, check, sizeof(check) , 0);
 			check[0] = 'x';
-			send(client_sk2, check, sizeof(check) , 0);
-		}else{
-			send(client_sk2, check, sizeof(check) , 0);
-			check[0] = 'o';
 			send(client_sk, check, sizeof(check) , 0);
+		}else{
+			send(client_sk, check, sizeof(check) , 0);
+			check[0] = 'o';
+			send(client_sk2, check, sizeof(check) , 0);
 		}
 		while(1){
 			if(check[0] == 'o'){
@@ -229,6 +231,9 @@ int main(void){
 	   		if(winner[0] != '0' || isDraw(number)) break;
 	   		send(client_sk, winner, sizeof(winner) , 0);
 	   		send(client_sk2, winner, sizeof(winner) , 0);
+	   		
+	   		send(client_sk, Draw, sizeof(Draw), 0);
+			send(client_sk2, Draw, sizeof(Draw), 0);
     		
     		check[0] = (check[0] == 'o') ? 'x' : 'o';
 		}
@@ -236,13 +241,13 @@ int main(void){
 	//클라2 이 맞았을 때  
 	}else if(*sniffling1 == *rndresult){
 		if(check[0] == 'o'){
-			send(client_sk2, check, sizeof(check) , 0);
+			send(client_sk, check, sizeof(check) , 0);
 			check[0] = 'x';
-			send(client_sk, check, sizeof(check) , 0);
-		}else{
-			send(client_sk, check, sizeof(check) , 0);
-			check[0] = 'o';
 			send(client_sk2, check, sizeof(check) , 0);
+		}else{
+			send(client_sk2, check, sizeof(check) , 0);
+			check[0] = 'o';
+			send(client_sk, check, sizeof(check) , 0);
 		}
 		while(1){
 			if(check[0] == 'o'){
@@ -332,6 +337,9 @@ int main(void){
 	   		if(winner[0] != '0' || isDraw(number)) break;
 	   		send(client_sk, winner, sizeof(winner) , 0);
 	   		send(client_sk2, winner, sizeof(winner) , 0);
+	   		
+	   		send(client_sk, Draw, sizeof(Draw), 0);
+			send(client_sk2, Draw, sizeof(Draw), 0);
     		
     		check[0] = (check[0] == 'o') ? 'x' : 'o';
 		}
@@ -345,6 +353,8 @@ int main(void){
 	}
 	
 	imsi = 0;
+	
+	Draw[2] = "0";
 	
 	send(client_sk, onedemdisplay, sizeof(onedemdisplay), 0);
 	send(client_sk2, onedemdisplay, sizeof(onedemdisplay), 0);
@@ -374,6 +384,11 @@ int main(void){
 	    printf("\033[32mx 승리!\033[0m\n");
 	}else{
 	    printf("\033[31m무승부!\033[0m\n");
+	    
+	    Draw[0] = 'd';
+	    
+	    send(client_sk, Draw, sizeof(Draw), 0);
+		send(client_sk2, Draw, sizeof(Draw), 0);
 	}
 	
 	Sleep(5000);

@@ -147,6 +147,8 @@ int main(void){
 		
 		imsi = 0;
 		
+		char Draw[2] = {0,};
+		
 		clearScreen();
 		
 		if(recv_len > 0){
@@ -169,17 +171,22 @@ int main(void){
 		
 		recv(sk, winner, sizeof(winner), 0);
 		
+		recv(sk, Draw, sizeof(Draw), 0);
+		
 		printf("winner의 값 : %c\n",winner[0]);
 		
-		if(winner[0] == myMark){
-		    printf("\033[32m%c 승리!\033[0m", myMark);
+		
+		if(Draw[0] == 'd'){
+			printf("\033[35m무승부!\033[0m");
 		    break;
-		}else if(winner[0] == 'o' || winner[0] == 'x'){
-		    printf("\033[31m%c 패배!\033[0m", myMark);
-		    break;
-		}else if(isDraw(number)){
-		    printf("\033[35m무승부!\033[0m");
-		    break;
+		}else{
+			if(winner[0] == myMark){
+			    printf("\033[32m%c 승리!\033[0m", myMark);
+			    break;
+			}else if(winner[0] == 'o' || winner[0] == 'x'){
+			    printf("\033[31m%c 패배!\033[0m", myMark);
+			    break;
+			}
 		}
 	}
 	

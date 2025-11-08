@@ -100,6 +100,7 @@ int main(void){
 			do{
 				valid = 0;
 				Tnumber[0] = _getch();
+				Beep(293.6648, 100);
 				if(check[0] == 'o'){
 					for(int c=0;c<3;c++){
 						for(int v=0;v<3;v++){
